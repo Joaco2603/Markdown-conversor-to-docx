@@ -11,12 +11,29 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import os
 import re
 from pathlib import Path
 from typing import List, Tuple
 
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*)$")
+
+
+def load_dotenv(dotenv_path: Path = Path(".env")) -> None:
+    """Load KEY=VALUE pairs from .env into process env if not already set."""
+    if not dotenv_path.exists():
+        return
+
+    for raw_line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
 
 
 def read_text(path: Path) -> str:
@@ -266,42 +283,52 @@ def build_document(
 
 
 def main() -> None:
+    load_dotenv()
+
+    default_input = os.getenv("MD_INPUT_PATH", "markdown/README.md")
+    default_output = os.getenv("MD_OUTPUT_PATH", "output/marco_legal_formateado.md")
+    default_style = os.getenv("MD_STYLE", "legal")
+    default_profile = os.getenv("MD_PROFILE", "marco_legal")
+    default_entity = os.getenv("MD_ENTITY", "[NOMBRE DE LA ENTIDAD RESPONSABLE]")
+    default_country = os.getenv("MD_COUNTRY", "Costa Rica")
+    default_contact = os.getenv("MD_CONTACT", "[CORREO/TELEFONO/DOMICILIO]")
+
     parser = argparse.ArgumentParser(
         description="Generate formatted legal/professional markdown from README.md"
     )
     parser.add_argument(
         "--input",
         "-i",
-        default="markdown/README.md",
+        default=default_input,
         help="Input markdown path",
     )
     parser.add_argument(
         "--output",
         "-o",
-        default="output/marco_legal_formateado.md",
+        default=default_output,
         help="Output markdown path",
     )
     parser.add_argument(
         "--style",
         choices=["legal", "professional"],
-        default="legal",
+        default=default_style,
         help="Output style",
     )
     parser.add_argument(
         "--profile",
         choices=["marco_legal", "generic"],
-        default="marco_legal",
+        default=default_profile,
         help="Formatting profile",
     )
     parser.add_argument(
         "--entity",
-        default="[NOMBRE DE LA ENTIDAD RESPONSABLE]",
+        default=default_entity,
         help="Entity/owner name",
     )
-    parser.add_argument("--country", default="Costa Rica", help="Country/jurisdiction")
+    parser.add_argument("--country", default=default_country, help="Country/jurisdiction")
     parser.add_argument(
         "--contact",
-        default="[CORREO/TELEFONO/DOMICILIO]",
+        default=default_contact,
         help="Contact line",
     )
 

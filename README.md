@@ -9,12 +9,45 @@ Archivo del script: `generate_formatted_doc.py`
 - Python 3.9 o superior.
 - Archivo de entrada en formato Markdown (`.md`).
 
+## Configuracion por entorno (.env)
+
+Este proyecto soporta rutas y metadatos por variables de entorno para que funcione igual en cualquier equipo.
+
+1. Copia la plantilla:
+
+```bash
+copy .env.example .env
+```
+
+2. Edita `.env` con tus rutas y datos.
+
+Variables disponibles:
+
+- `MD_INPUT_PATH`
+- `MD_OUTPUT_PATH`
+- `MD_STYLE`
+- `MD_PROFILE`
+- `MD_ENTITY`
+- `MD_COUNTRY`
+- `MD_CONTACT`
+- `DOCX_INPUT_PATH`
+- `DOCX_OUTPUT_PATH`
+
+Nota: los argumentos por CLI siempre tienen prioridad sobre `.env`.
+
 ## Uso rapido
 
 Desde la carpeta del proyecto:
 
 ```bash
 python generate_formatted_doc.py --input markdown/marco_legal_y_etico.md --output output/marco_legal_formateado.md --profile marco_legal --style legal --entity "Tu Institucion" --country "Costa Rica" --contact "legal@tuorg.org"
+```
+
+Usando solo `.env` (sin pasar rutas):
+
+```bash
+python generate_formatted_doc.py
+python md_to_docx.py
 ```
 
 ## Parametros

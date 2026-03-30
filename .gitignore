@@ -12,6 +12,9 @@ Thumbs.db
 # Local logs
 *.log
 
+# Local env configuration
+.env
+
 # Keep folders, ignore their content
 markdown/*
 !markdown/.gitkeep
